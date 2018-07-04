@@ -1,0 +1,62 @@
+* FNB CSV Statement Demoronizer
+
+** The Problem
+
+FNB can email statements in CSV format (in addition to the normal PDF), if you enable that feature.
+
+This is a nice feature - I would like to import my statements into my personal finance tool of choice,
+without having to remember to go online and download it myself.
+
+The problem is that the actual format of the e-mailed CSV statement is moronic.
+Which is strange, since the CSV format you get when manually going into your internet banking
+and downloading your transaction history yourself is mostly sensible.
+
+Below is an example of what one can expect in the e-mailed CSV statement:
+
+#+NAME: account_number.csv
+#+BEGIN_SRC csv
+2,account_number,'MR JOHN D DEER','FNB TJEKREKENING'
+3
+3,,'Staat'
+3,'Staatnommer','Vanaf Datum','Tot Datum','Openingsaldo','Afsluitingsaldo','BTW Gehef'
+3,55,'28 Desember 2017','28 Januarie 2018',0.01,0.01,-0.01
+4
+4,,'Opsomming'
+4,,,'Rente op Debietsaldo',.00%
+4,'Staat Datum','Beskrywing','Nommer','Sub Totaal','Totaal'
+4,'28 Januarie 2018','Openingsaldo',,,0.01
+4,'28 Januarie 2018','Afsluitingsaldo',,0.01
+4,'28 Januarie 2018','Oortrekke Limiet',,0.01
+5
+5,,'Transaksies'
+5,'Nommer','Datum','Beskrywing1','Beskrywing2','Beskrywing3','Bedrag','Saldo','Opgeloopte Koste'
+5,1,'29 Des',"Inw Ontvangs","Company, Inc",,0.01,0.01,
+5,2,'01 Jan',"Gereeld Bet Na","ABC","XYZ",-0.01,0.01,
+6,'END'
+#+END_SRC
+
+As you can see:
+
+ - The dates of the transaction lines doesn't include the year.
+ - It has inconsistent quoting - some fields are single quoted, others double quoted.
+
+Compare this with a manually downloaded transaction history.
+
+It is mostly sensible, with the exception that there are *no* quoting of fields here - it breaks on descriptions with commas in them:
+
+#+NAME: account_number.csv
+#+BEGIN_SRC csv
+ACCOUNT TRANSACTION HISTORY
+
+Name:, John, Deer
+Account:, account_number, [FNB Cheque Account]
+Balance:, 0.01, 0.01
+
+Date, Amount, Balance, Description
+2018/01/01, -0.01, 0.01, ABC
+2017/12/29, 0.01, 0.01, COMPANY, INC
+#+END_SRC
+
+** The Goal
+
+Convert the moronic CSV statement into a less-moronic CSV format.
