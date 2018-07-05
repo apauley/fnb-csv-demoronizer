@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
-import sys
+import sys, csv, datetime
 import os.path
-import csv
-import datetime
 
 short_months_afr=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Des']
 short_months_eng=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
@@ -55,7 +53,7 @@ def demoronize(inputfile, outputfile):
             previous_trx_date = date
             if date:
                 row[2] = date.isoformat()
-        csvwriter.writerow(row)
+            csvwriter.writerow(row)
     inputfile.close()
     outputfile.close()
 
