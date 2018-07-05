@@ -35,28 +35,17 @@ Below is an example of what one can expect in the e-mailed CSV statement:
 6,'END'
 #+END_SRC
 
-As you can see:
+The biggest problem is that the dates in the transaction lines is not in any [[https://xkcd.com/1179/][acceptable standard format]] such as ISO 8601.
+It doesn't even include the year. And transactions in the same statement may span over more than one year.
 
- - The dates of the transaction lines doesn't include the year.
- - It has inconsistent quoting - some fields are single quoted, others double quoted.
+** The Solution
 
-Compare this with a manually downloaded transaction history.
+This script will extract the transactions from a CSV statement like the one above, and fix the dates in the process.
 
-It is mostly sensible, with the exception that there are *no* quoting of fields here - it breaks on descriptions with commas in them:
+It should look something like this:
 
-#+NAME: account_number.csv
 #+BEGIN_SRC csv
-ACCOUNT TRANSACTION HISTORY
-
-Name:, John, Deer
-Account:, account_number, [FNB Cheque Account]
-Balance:, 0.01, 0.01
-
-Date, Amount, Balance, Description
-2018/01/01, -0.01, 0.01, ABC
-2017/12/29, 0.01, 0.01, COMPANY, INC
+"5","'Nommer'","'Datum'","'Beskrywing1'","'Beskrywing2'","'Beskrywing3'","'Bedrag'","'Saldo'","'Opgeloopte Koste'"
+"5","1","2017-12-29","Inw Ontvangs","Company, Inc","","0.01","0.01",""
+"5","2","2018-01-01","Gereeld Bet Na","ABC","XYZ","-0.01","0.01",""
 #+END_SRC
-
-** The Goal
-
-Convert the moronic CSV statement into a less-moronic CSV format.
