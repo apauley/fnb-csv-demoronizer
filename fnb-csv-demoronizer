@@ -3,7 +3,7 @@
 import sys, csv, datetime
 import os.path
 
-short_months_afr=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Des']
+short_months_afr=['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Des']
 short_months_eng=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
 def month_index():
