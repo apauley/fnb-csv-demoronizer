@@ -64,10 +64,10 @@ def parse_args(args):
         sys.exit(1)
     else:
         inputfile = open(args[1])
-        if len(args) >= 3:
-            outputfile = open(args[2], 'w')
-        else:
+        if len(args) == 2 or args[2] == '-':
             outputfile = sys.stdout
+        else:
+            outputfile = open(args[2], 'w')
         return inputfile, outputfile
 
 if __name__ == '__main__':
