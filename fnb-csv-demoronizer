@@ -1,24 +1,39 @@
 #!/usr/bin/env python3
 
-import sys, csv, datetime
-import os.path
+import sys, csv, os.path
+from datetime import date
 
 short_months_afr=['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Des']
 short_months_eng=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
-def month_index():
+long_months_afr=['Januarie','Februarie','Maart','April','Mei','Junie','Julie','Augustus','September','Oktober','November','Desember']
+long_months_eng=['January','February','March','April','May','June','July','August','September','October','November','December']
+
+def month_index(month_lists):
     index = {}
-    for month_list in [short_months_afr, short_months_eng]:
+    for month_list in month_lists:
         index.update({k: v+1 for v, k in enumerate(month_list)})
     return index
 
-def extract_year_from_longform_date(datestr):
+month_index_short = month_index([short_months_afr, short_months_eng])
+month_index_long  = month_index([long_months_afr, long_months_eng])
+
+def parse_longform_date(datestr):
+    """Convert a string such as '31 Desember 2019' into a date.
+
+    >>> parse_longform_date("'31 Desember 2019'")
+    datetime.date(2019, 12, 31)
+    >>> parse_longform_date("12 April 2032")
+    datetime.date(2032, 4, 12)
+    """
     split = datestr.split()
     if len(split) == 3:
+        day = int(split[0].strip("'"))
+        month = month_index_long[split[1].strip("'")]
         year = int(split[2].strip("'"))
+        return date(year, month, day)
     else:
-        year = None
-    return year
+        return None
 
 def determine_trx_year(previous_trx_date, month):
     if month < previous_trx_date.month:
@@ -27,32 +42,40 @@ def determine_trx_year(previous_trx_date, month):
         year = previous_trx_date.year
     return year
 
-def parse_short_date(datestr, statement_year, previous_trx_date):
+def parse_short_date(datestr, statement_date, previous_trx_date):
+    """Parse a date string without an explicit year into a proper date, by using the start date of the statement that does have a year.
+
+    >>> parse_short_date('29 Des', date(2017, 12, 28), None)
+    datetime.date(2017, 12, 29)
+
+    >>> parse_short_date('01 Jan', date(2017, 12, 28), date(2017, 12, 29))
+    datetime.date(2018, 1, 1)
+    """
+    statement_year = statement_date.year
     split=datestr.strip("'").split()
     if len(split) == 2:
         day = int(split[0])
-        month = month_index()[split[1]]
+        month = month_index_short[split[1]]
         if previous_trx_date:
             year = determine_trx_year(previous_trx_date, month)
         else:
             year = statement_year
-        date = datetime.date(year, month, day)
+        return date(year, month, day)
     else:
-        date = None
-    return date
+        return None
 
 def demoronize(inputfile, outputfile):
     csvreader = csv.reader(inputfile)
     csvwriter = csv.writer(outputfile, dialect='unix')
     previous_trx_date = None
     for row in csvreader:
-        if row[0] == '3' and len(row) > 3:
-            statement_year=extract_year_from_longform_date(row[2])
+        if row[0] == '3' and len(row) > 3 and row[1].isnumeric():
+            statement_date=parse_longform_date(row[2])
         if row[0] == '5' and len(row) > 3:
-            date=parse_short_date(row[2], statement_year, previous_trx_date)
-            previous_trx_date = date
-            if date:
-                row[2] = date.isoformat()
+            trx_date=parse_short_date(row[2], statement_date, previous_trx_date)
+            previous_trx_date = trx_date
+            if trx_date:
+                row[2] = trx_date.isoformat()
             csvwriter.writerow(row)
     inputfile.close()
     outputfile.close()
@@ -71,5 +94,10 @@ def parse_args(args):
         return inputfile, outputfile
 
 if __name__ == '__main__':
-    inputfile, outputfile = parse_args(sys.argv)
-    demoronize(inputfile, outputfile)
+    if len(sys.argv) > 1 and sys.argv[1] == 'test':
+        import doctest
+        res = doctest.testmod()
+        sys.exit(res.failed)
+    else:
+        inputfile, outputfile = parse_args(sys.argv)
+        demoronize(inputfile, outputfile)

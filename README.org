@@ -49,3 +49,18 @@ It should look something like this:
 "5","1","2017-12-29","Inw Ontvangs","Company, Inc","","0.01","0.01",""
 "5","2","2018-01-01","Gereeld Bet Na","ABC","XYZ","-0.01","0.01",""
 #+END_SRC
+
+** Usage
+
+Just run the script and look at the help text:
+
+#+BEGIN_SRC sh
+./fnb-csv-demoronizer
+USAGE: fnb-csv-demoronizer statement.csv [output.csv]
+#+END_SRC
+
+You can also run some internal tests:
+
+#+BEGIN_SRC sh
+./fnb-csv-demoronizer test -v
+#+END_SRC
