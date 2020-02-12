@@ -35,8 +35,15 @@ def parse_longform_date(datestr):
     else:
         return None
 
-def determine_trx_year(previous_trx_date, month):
-    if month < previous_trx_date.month:
+def determine_trx_year(previous_trx_date, current_month):
+    """Calculate transaction year for the current transaction based on a previous full date.
+
+    >>> determine_trx_year(date(2019,12,28), 30)
+    2019
+    >>> determine_trx_year(date(2019,12,28), 1)
+    2020
+    """
+    if current_month < previous_trx_date.month:
         year = previous_trx_date.year + 1
     else:
         year = previous_trx_date.year
@@ -50,8 +57,10 @@ def parse_short_date(datestr, statement_date, previous_trx_date):
 
     >>> parse_short_date('01 Jan', date(2017, 12, 28), date(2017, 12, 29))
     datetime.date(2018, 1, 1)
+
+    >>> parse_short_date('02 Jan', date(2019, 12, 31), None)
+    datetime.date(2020, 1, 2)
     """
-    statement_year = statement_date.year
     split=datestr.strip("'").split()
     if len(split) == 2:
         day = int(split[0])
@@ -59,7 +68,7 @@ def parse_short_date(datestr, statement_date, previous_trx_date):
         if previous_trx_date:
             year = determine_trx_year(previous_trx_date, month)
         else:
-            year = statement_year
+            year = determine_trx_year(statement_date, month)
         return date(year, month, day)
     else:
         return None
