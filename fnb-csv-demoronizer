@@ -4,6 +4,7 @@ import sys, csv, os.path
 from datetime import date
 
 short_months_afr=['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Des']
+short_months_afr_old=['Jan','Feb','Maa','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Des']
 short_months_eng=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
 long_months_afr=['Januarie','Februarie','Maart','April','Mei','Junie','Julie','Augustus','September','Oktober','November','Desember']
@@ -15,7 +16,7 @@ def month_index(month_lists):
         index.update({k: v+1 for v, k in enumerate(month_list)})
     return index
 
-month_index_short = month_index([short_months_afr, short_months_eng])
+month_index_short = month_index([short_months_afr, short_months_afr_old, short_months_eng])
 month_index_long  = month_index([long_months_afr, long_months_eng])
 
 def parse_longform_date(datestr):
