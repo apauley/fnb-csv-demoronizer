@@ -3,21 +3,52 @@
 import sys, csv, os.path
 from datetime import date
 
-short_months_afr=['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Des']
-short_months_afr_old=['Jan','Feb','Maa','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Des']
-short_months_eng=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+month_names_short = [
+    ['Jan'],
+    ['Feb'],
+    ['Mrt', 'Mar', 'Maa'],
+    ['Apr'],
+    ['Mei', 'May'],
+    ['Jun'],
+    ['Jul'],
+    ['Aug'],
+    ['Sep'],
+    ['Okt', 'Oct'],
+    ['Nov'],
+    ['Des', 'Dec'],
+]
 
-long_months_afr=['Januarie','Februarie','Maart','April','Mei','Junie','Julie','Augustus','September','Oktober','November','Desember']
-long_months_eng=['January','February','March','April','May','June','July','August','September','October','November','December']
+month_names_long = [
+    ['Januarie', 'January'],
+    ['Februarie', 'February'],
+    ['Maart', 'March'],
+    ['April'],
+    ['Mei', 'May'],
+    ['Junie', 'June'],
+    ['Julie', 'July'],
+    ['Augustus', 'August'],
+    ['September'],
+    ['Oktober', 'October'],
+    ['November'],
+    ['Desember', 'December'],
+]
 
-def month_index(month_lists):
+def month_index(months):
+    """Create mappping of month names (multiple languages) to their corresponding month numbers.
+
+    >>> month_index(month_names_short)
+    {'Jan': 1, 'Feb': 2, 'Mrt': 3, 'Mar': 3, 'Maa': 3, 'Apr': 4, 'Mei': 5, 'May': 5, 'Jun': 6, 'Jul': 7, 'Aug': 8, 'Sep': 9, 'Okt': 10, 'Oct': 10, 'Nov': 11, 'Des': 12, 'Dec': 12}
+
+    >>> month_index(month_names_long)
+    {'Januarie': 1, 'January': 1, 'Februarie': 2, 'February': 2, 'Maart': 3, 'March': 3, 'April': 4, 'Mei': 5, 'May': 5, 'Junie': 6, 'June': 6, 'Julie': 7, 'July': 7, 'Augustus': 8, 'August': 8, 'September': 9, 'Oktober': 10, 'October': 10, 'November': 11, 'Desember': 12, 'December': 12}
+    """
     index = {}
-    for month_list in month_lists:
-        index.update({k: v+1 for v, k in enumerate(month_list)})
+    for (i, month_list) in enumerate(months):
+        index.update({k: i+1 for k in month_list})
     return index
 
-month_index_short = month_index([short_months_afr, short_months_afr_old, short_months_eng])
-month_index_long  = month_index([long_months_afr, long_months_eng])
+month_index_short = month_index(month_names_short)
+month_index_long  = month_index(month_names_long)
 
 def parse_longform_date(datestr):
     """Convert a string such as '31 Desember 2019' into a date.
